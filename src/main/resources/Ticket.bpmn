@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1op5okj" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.9.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.18.0">
-  <bpmn:process id="Process_Ticket" name="Ticket" isExecutable="true" camunda:versionTag="1.3">
+  <bpmn:process id="Process_Ticket" name="Ticket" isExecutable="true" camunda:versionTag="1.4">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_0x5bzfb</bpmn:outgoing>
     </bpmn:startEvent>
@@ -253,8 +253,8 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_04z2s1b_di" bpmnElement="Flow_04z2s1b">
         <di:waypoint x="1270" y="450" />
-        <di:waypoint x="1390" y="450" />
-        <di:waypoint x="1390" y="310" />
+        <di:waypoint x="1410" y="450" />
+        <di:waypoint x="1410" y="310" />
         <di:waypoint x="1485" y="310" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0iygr6m_di" bpmnElement="Flow_0iygr6m">

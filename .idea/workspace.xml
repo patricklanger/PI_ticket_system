@@ -4,29 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1373cdd9-d271-44dc-9289-0cdf33404829" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/CamundaBpmProcessApplication.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/CreateTicketID.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/DeploySolution.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/GenerateSolution.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/LoggerDelegate.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/ProcessConstants.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/META-INF/processes.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/process.bpmn" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/forms/start-form.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/webapp/forms/task-form.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/ProcessUnitTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/camunda.cfg.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/logback-test.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/resources/logging.properties" afterDir="false" />
+    <list default="true" id="1373cdd9-d271-44dc-9289-0cdf33404829" name="Changes" comment="clean up">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/Ticket.bpmn" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Ticket.bpmn" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/process.bpmn" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/forms/checkSolution-form.form" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/forms/describeSolution-form.form" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/forms/start-form.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/forms/task-form.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/example/ProcessUnitTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/example/ProcessUnitTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -169,11 +156,35 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1680429734197</updated>
-      <workItem from="1680429735602" duration="14570000" />
+      <workItem from="1680429735602" duration="16795000" />
     </task>
+    <task id="LOCAL-00001" summary="initial commit">
+      <created>1680508631162</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1680508631162</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="initial commit" />
+    <MESSAGE value="clean up" />
+    <option name="LAST_COMMIT_MESSAGE" value="clean up" />
   </component>
 </project>
