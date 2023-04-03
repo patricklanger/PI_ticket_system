@@ -1,0 +1,66 @@
+{
+  "components": [
+    {
+      "values": [
+        {
+          "label": "Support",
+          "value": "support"
+        },
+        {
+          "label": "Security",
+          "value": "security"
+        }
+      ],
+      "label": "Type",
+      "type": "select",
+      "id": "Field_0hqvshv",
+      "key": "field_ticketType",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "values": [
+        {
+          "label": "ToDo",
+          "value": "todo"
+        }
+      ],
+      "label": "Status",
+      "type": "select",
+      "id": "Field_05xhau5",
+      "key": "field_ticketStatus",
+      "validate": {
+        "required": true
+      },
+      "defaultValue": "todo",
+      "disabled": true
+    },
+    {
+      "label": "Reporter",
+      "type": "textfield",
+      "id": "Field_12a9oej",
+      "key": "field_ticketReporter",
+      "description": "Name of the person who reports",
+      "validate": {
+        "minLength": 2,
+        "required": true
+      }
+    },
+    {
+      "label": "Description",
+      "type": "textfield",
+      "id": "Field_0wbf3oj",
+      "key": "field_ticketDescription"
+    }
+  ],
+  "type": "default",
+  "id": "Form_1x18nmb",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.9.0"
+  },
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.18.0",
+  "schemaVersion": 7
+}
