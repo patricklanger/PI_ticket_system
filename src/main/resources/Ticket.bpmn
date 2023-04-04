@@ -14,30 +14,30 @@
       <bpmn:incoming>Flow_08usylt</bpmn:incoming>
       <bpmn:outgoing>Flow_0zffqui</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="Gateway_0bqhlax">
+    <bpmn:exclusiveGateway id="Gateway_0bqhlax" name="type of ticket">
       <bpmn:incoming>Flow_0zffqui</bpmn:incoming>
       <bpmn:outgoing>Flow_0exwfzh</bpmn:outgoing>
       <bpmn:outgoing>Flow_0w1e330</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_0zffqui" sourceRef="ServiceTask_createTicketID" targetRef="Gateway_0bqhlax" />
-    <bpmn:sequenceFlow id="Flow_0exwfzh" name="support-ticket" sourceRef="Gateway_0bqhlax" targetRef="ServiceTask_generateSolution">
+    <bpmn:sequenceFlow id="Flow_0exwfzh" name="support-ticket" sourceRef="Gateway_0bqhlax" targetRef="Gateway_03azjv2">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{field_ticketType == "support"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0w1e330" name="security-ticket" sourceRef="Gateway_0bqhlax" targetRef="Activity_1wrlyis">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{field_ticketType == "security"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:exclusiveGateway id="Gateway_0ctna2y">
+    <bpmn:exclusiveGateway id="Gateway_0ctna2y" name="level of risk">
       <bpmn:incoming>Flow_1p53gc8</bpmn:incoming>
       <bpmn:outgoing>Flow_0xulaot</bpmn:outgoing>
       <bpmn:outgoing>Flow_0zaap6v</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_0xulaot" name="risk &#60;= 5" sourceRef="Gateway_0ctna2y" targetRef="ServiceTask_generateSolution">
+    <bpmn:sequenceFlow id="Flow_0xulaot" name="risk &#60;= 5" sourceRef="Gateway_0ctna2y" targetRef="Gateway_03azjv2">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{field_riskRating &lt;= 5}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0zaap6v" name="risk &#62; 5" sourceRef="Gateway_0ctna2y" targetRef="UserTask_someoneFixIt">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{field_riskRating &gt; 5}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:boundaryEvent id="Event_TimeToFixIt" attachedToRef="UserTask_someoneFixIt">
+    <bpmn:boundaryEvent id="Event_TimeToFixIt" name="20 seconds to fix the ticket" attachedToRef="UserTask_someoneFixIt">
       <bpmn:outgoing>Flow_07c8sf1</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_19dqrs8">
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT20S</bpmn:timeDuration>
@@ -48,8 +48,7 @@
       <bpmn:incoming>Flow_0a05ta2</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:serviceTask id="ServiceTask_generateSolution" name="GPT generates solution" camunda:class="org.example.GenerateSolution">
-      <bpmn:incoming>Flow_0xulaot</bpmn:incoming>
-      <bpmn:incoming>Flow_0exwfzh</bpmn:incoming>
+      <bpmn:incoming>Flow_0twmi80</bpmn:incoming>
       <bpmn:outgoing>Flow_0s8039u</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_0s8039u" sourceRef="ServiceTask_generateSolution" targetRef="UserTask_checkSolution" />
@@ -57,7 +56,7 @@
       <bpmn:incoming>Flow_0s8039u</bpmn:incoming>
       <bpmn:outgoing>Flow_0dbxwvx</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:exclusiveGateway id="Gateway_10e1k80">
+    <bpmn:exclusiveGateway id="Gateway_10e1k80" name="type of ticket status">
       <bpmn:incoming>Flow_0dbxwvx</bpmn:incoming>
       <bpmn:incoming>Flow_1b1i9fv</bpmn:incoming>
       <bpmn:incoming>Flow_04z2s1b</bpmn:incoming>
@@ -92,10 +91,10 @@
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1b1i9fv" sourceRef="UserTask_someoneFixIt" targetRef="Gateway_10e1k80" />
     <bpmn:sequenceFlow id="Flow_04z2s1b" sourceRef="UserTask_maryFixIt" targetRef="Gateway_10e1k80" />
-    <bpmn:subProcess id="Activity_1wrlyis" name="rate security risk">
+    <bpmn:subProcess id="Activity_1wrlyis" name="assessment of the ticket risk">
       <bpmn:incoming>Flow_0w1e330</bpmn:incoming>
       <bpmn:outgoing>Flow_1p53gc8</bpmn:outgoing>
-      <bpmn:startEvent id="Event_0lef0ug">
+      <bpmn:startEvent id="Event_0lef0ug" name="start of the risk assessment">
         <bpmn:outgoing>Flow_1k0uw94</bpmn:outgoing>
       </bpmn:startEvent>
       <bpmn:userTask id="UserTask_rateSecurityRisk" name="rate security risk" camunda:formKey="camunda-forms:app:forms/rateRisk-form.form">
@@ -106,7 +105,7 @@
         <bpmn:incoming>Flow_0nve047</bpmn:incoming>
         <bpmn:outgoing>Flow_0obht8a</bpmn:outgoing>
       </bpmn:userTask>
-      <bpmn:boundaryEvent id="Event_TimeToRate" cancelActivity="false" attachedToRef="UserTask_rateSecurityRisk">
+      <bpmn:boundaryEvent id="Event_TimeToRate" name="20 seconds to rate the ticket" cancelActivity="false" attachedToRef="UserTask_rateSecurityRisk">
         <bpmn:outgoing>Flow_0nve047</bpmn:outgoing>
         <bpmn:timerEventDefinition id="TimerEventDefinition_1rj3nli">
           <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT20S</bpmn:timeDuration>
@@ -121,13 +120,19 @@
       </bpmn:exclusiveGateway>
       <bpmn:sequenceFlow id="Flow_0obht8a" sourceRef="UserTask_JohnRatesSecurityRisk" targetRef="Gateway_0wp1r5x" />
       <bpmn:sequenceFlow id="Flow_1m0o17t" sourceRef="UserTask_rateSecurityRisk" targetRef="Gateway_0wp1r5x" />
-      <bpmn:endEvent id="Event_1anxe2h">
+      <bpmn:endEvent id="Event_1anxe2h" name="assessment completed">
         <bpmn:incoming>Flow_05pisde</bpmn:incoming>
         <bpmn:terminateEventDefinition id="TerminateEventDefinition_1n9araa" />
       </bpmn:endEvent>
       <bpmn:sequenceFlow id="Flow_05pisde" sourceRef="Gateway_0wp1r5x" targetRef="Event_1anxe2h" />
     </bpmn:subProcess>
     <bpmn:sequenceFlow id="Flow_1p53gc8" sourceRef="Activity_1wrlyis" targetRef="Gateway_0ctna2y" />
+    <bpmn:exclusiveGateway id="Gateway_03azjv2">
+      <bpmn:incoming>Flow_0xulaot</bpmn:incoming>
+      <bpmn:incoming>Flow_0exwfzh</bpmn:incoming>
+      <bpmn:outgoing>Flow_0twmi80</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0twmi80" sourceRef="Gateway_03azjv2" targetRef="ServiceTask_generateSolution" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_Ticket">
@@ -143,9 +148,15 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0bqhlax_di" bpmnElement="Gateway_0bqhlax" isMarkerVisible="true">
         <dc:Bounds x="595" y="92" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="591" y="62" width="62" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0ctna2y_di" bpmnElement="Gateway_0ctna2y" isMarkerVisible="true">
         <dc:Bounds x="955" y="285" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="952" y="342" width="56" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1k1qb7u_di" bpmnElement="Event_1k1qb7u">
         <dc:Bounds x="1862" y="292" width="36" height="36" />
@@ -159,6 +170,9 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_10e1k80_di" bpmnElement="Gateway_10e1k80" isMarkerVisible="true">
         <dc:Bounds x="1485" y="285" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1529" y="326" width="62" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_139mcql_di" bpmnElement="UserTask_maryFixIt">
         <dc:Bounds x="1170" y="410" width="100" height="80" />
@@ -169,6 +183,9 @@
       <bpmndi:BPMNShape id="Activity_17grngf_di" bpmnElement="ServiceTask_deploySolution">
         <dc:Bounds x="1640" y="190" width="100" height="80" />
         <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0bv5cib" bpmnElement="Gateway_03azjv2" isMarkerVisible="true">
+        <dc:Bounds x="1005" y="92" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1wrlyis_di" bpmnElement="Activity_1wrlyis" isExpanded="true">
         <dc:Bounds x="360" y="420" width="490" height="350" />
@@ -186,12 +203,21 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1anxe2h_di" bpmnElement="Event_1anxe2h">
         <dc:Bounds x="752" y="572" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="740" y="615" width="60" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0lef0ug_di" bpmnElement="Event_0lef0ug">
         <dc:Bounds x="382" y="482" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="364" y="525" width="73" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0tzs7c9" bpmnElement="Event_TimeToRate">
         <dc:Bounds x="542" y="522" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="475" y="546" width="69" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_0m3ygio" bpmnElement="Flow_0nve047">
         <di:waypoint x="560" y="558" />
@@ -217,6 +243,9 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1hgmt59_di" bpmnElement="Event_TimeToFixIt">
         <dc:Bounds x="1202" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1118" y="356" width="84" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0x5bzfb_di" bpmnElement="Flow_0x5bzfb">
         <di:waypoint x="215" y="117" />
@@ -232,25 +261,24 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0exwfzh_di" bpmnElement="Flow_0exwfzh">
         <di:waypoint x="645" y="117" />
-        <di:waypoint x="1170" y="117" />
+        <di:waypoint x="1005" y="117" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="661" y="99" width="67" height="14" />
+          <dc:Bounds x="776" y="99" width="67" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0w1e330_di" bpmnElement="Flow_0w1e330">
         <di:waypoint x="620" y="142" />
         <di:waypoint x="620" y="420" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="585" y="249" width="69" height="14" />
+          <dc:Bounds x="635" y="249" width="69" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0xulaot_di" bpmnElement="Flow_0xulaot">
         <di:waypoint x="1005" y="310" />
-        <di:waypoint x="1060" y="310" />
-        <di:waypoint x="1060" y="117" />
-        <di:waypoint x="1170" y="117" />
+        <di:waypoint x="1030" y="310" />
+        <di:waypoint x="1030" y="142" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1068" y="213" width="43" height="14" />
+          <dc:Bounds x="978" y="203" width="43" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0zaap6v_di" bpmnElement="Flow_0zaap6v">
@@ -275,7 +303,7 @@
         <di:waypoint x="1220" y="530" />
         <di:waypoint x="1220" y="490" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1525" y="362" width="70" height="14" />
+          <dc:Bounds x="1325" y="513" width="69" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_07c8sf1_di" bpmnElement="Flow_07c8sf1">
@@ -287,7 +315,7 @@
         <di:waypoint x="1510" y="230" />
         <di:waypoint x="1640" y="230" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1505" y="203" width="62" height="14" />
+          <dc:Bounds x="1529" y="203" width="61" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1u5h5ph_di" bpmnElement="Flow_1u5h5ph">
@@ -300,7 +328,7 @@
         <di:waypoint x="1535" y="310" />
         <di:waypoint x="1862" y="310" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1557" y="292" width="54" height="14" />
+          <dc:Bounds x="1643" y="292" width="53" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1b1i9fv_di" bpmnElement="Flow_1b1i9fv">
@@ -318,6 +346,10 @@
         <di:waypoint x="903" y="595" />
         <di:waypoint x="903" y="310" />
         <di:waypoint x="955" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0twmi80_di" bpmnElement="Flow_0twmi80">
+        <di:waypoint x="1055" y="117" />
+        <di:waypoint x="1170" y="117" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
