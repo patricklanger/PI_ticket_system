@@ -23,29 +23,14 @@
     <bpmn:sequenceFlow id="Flow_0exwfzh" name="support-ticket" sourceRef="Gateway_0bqhlax" targetRef="ServiceTask_generateSolution">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{field_ticketType == "support"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0w1e330" name="security-ticket" sourceRef="Gateway_0bqhlax" targetRef="UserTask_rateSecurityRisk">
+    <bpmn:sequenceFlow id="Flow_0w1e330" name="security-ticket" sourceRef="Gateway_0bqhlax" targetRef="Activity_1wrlyis">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{field_ticketType == "security"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0fljffp" sourceRef="Event_TimeToRate" targetRef="UserTask_JohnRatesSecurityRisk" />
-    <bpmn:boundaryEvent id="Event_TimeToRate" cancelActivity="false" attachedToRef="UserTask_rateSecurityRisk">
-      <bpmn:outgoing>Flow_0fljffp</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_1wglxkn">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT20S</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
-    </bpmn:boundaryEvent>
-    <bpmn:userTask id="UserTask_JohnRatesSecurityRisk" name="john rates security risk" camunda:formKey="camunda-forms:app:forms/rateRisk-form.form" camunda:assignee="john">
-      <bpmn:extensionElements />
-      <bpmn:incoming>Flow_0fljffp</bpmn:incoming>
-      <bpmn:outgoing>Flow_05vnoh4</bpmn:outgoing>
-    </bpmn:userTask>
     <bpmn:exclusiveGateway id="Gateway_0ctna2y">
-      <bpmn:incoming>Flow_05vnoh4</bpmn:incoming>
-      <bpmn:incoming>Flow_1x4xouv</bpmn:incoming>
+      <bpmn:incoming>Flow_1p53gc8</bpmn:incoming>
       <bpmn:outgoing>Flow_0xulaot</bpmn:outgoing>
       <bpmn:outgoing>Flow_0zaap6v</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_05vnoh4" sourceRef="UserTask_JohnRatesSecurityRisk" targetRef="Gateway_0ctna2y" />
-    <bpmn:sequenceFlow id="Flow_1x4xouv" sourceRef="UserTask_rateSecurityRisk" targetRef="Gateway_0ctna2y" />
     <bpmn:sequenceFlow id="Flow_0xulaot" name="risk &#60;= 5" sourceRef="Gateway_0ctna2y" targetRef="ServiceTask_generateSolution">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{field_riskRating &lt;= 5}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -81,10 +66,6 @@
       <bpmn:outgoing>Flow_0a05ta2</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_0dbxwvx" sourceRef="UserTask_checkSolution" targetRef="Gateway_10e1k80" />
-    <bpmn:userTask id="UserTask_rateSecurityRisk" name="rate security risk" camunda:formKey="camunda-forms:app:forms/rateRisk-form.form">
-      <bpmn:incoming>Flow_0w1e330</bpmn:incoming>
-      <bpmn:outgoing>Flow_1x4xouv</bpmn:outgoing>
-    </bpmn:userTask>
     <bpmn:userTask id="UserTask_maryFixIt" name="mary has to fix it" camunda:formKey="camunda-forms:app:forms/editTicketStatus-form.form" camunda:assignee="mary">
       <bpmn:incoming>Flow_07c8sf1</bpmn:incoming>
       <bpmn:incoming>Flow_1q83oat</bpmn:incoming>
@@ -98,11 +79,11 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{field_ticketStatus == "todo"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_07c8sf1" sourceRef="Event_TimeToFixIt" targetRef="UserTask_maryFixIt" />
-    <bpmn:sequenceFlow id="Flow_0iygr6m" name="ticket deploy" sourceRef="Gateway_10e1k80" targetRef="Activity_deploySolution">
+    <bpmn:sequenceFlow id="Flow_0iygr6m" name="ticket deploy" sourceRef="Gateway_10e1k80" targetRef="ServiceTask_deploySolution">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{field_ticketStatus == "deploy"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1u5h5ph" sourceRef="Activity_deploySolution" targetRef="Event_1k1qb7u" />
-    <bpmn:serviceTask id="Activity_deploySolution" name="deploy solution" camunda:class="org.example.DeploySolution">
+    <bpmn:sequenceFlow id="Flow_1u5h5ph" sourceRef="ServiceTask_deploySolution" targetRef="Event_1k1qb7u" />
+    <bpmn:serviceTask id="ServiceTask_deploySolution" name="deploy solution" camunda:class="org.example.DeploySolution">
       <bpmn:incoming>Flow_0iygr6m</bpmn:incoming>
       <bpmn:outgoing>Flow_1u5h5ph</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -111,6 +92,42 @@
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1b1i9fv" sourceRef="UserTask_someoneFixIt" targetRef="Gateway_10e1k80" />
     <bpmn:sequenceFlow id="Flow_04z2s1b" sourceRef="UserTask_maryFixIt" targetRef="Gateway_10e1k80" />
+    <bpmn:subProcess id="Activity_1wrlyis" name="rate security risk">
+      <bpmn:incoming>Flow_0w1e330</bpmn:incoming>
+      <bpmn:outgoing>Flow_1p53gc8</bpmn:outgoing>
+      <bpmn:startEvent id="Event_0lef0ug">
+        <bpmn:outgoing>Flow_1k0uw94</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:userTask id="UserTask_rateSecurityRisk" name="rate security risk" camunda:formKey="camunda-forms:app:forms/rateRisk-form.form">
+        <bpmn:incoming>Flow_1k0uw94</bpmn:incoming>
+        <bpmn:outgoing>Flow_1m0o17t</bpmn:outgoing>
+      </bpmn:userTask>
+      <bpmn:userTask id="UserTask_JohnRatesSecurityRisk" name="john rates security risk" camunda:formKey="camunda-forms:app:forms/rateRisk-form.form" camunda:assignee="john">
+        <bpmn:incoming>Flow_0nve047</bpmn:incoming>
+        <bpmn:outgoing>Flow_0obht8a</bpmn:outgoing>
+      </bpmn:userTask>
+      <bpmn:boundaryEvent id="Event_TimeToRate" cancelActivity="false" attachedToRef="UserTask_rateSecurityRisk">
+        <bpmn:outgoing>Flow_0nve047</bpmn:outgoing>
+        <bpmn:timerEventDefinition id="TimerEventDefinition_1rj3nli">
+          <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT20S</bpmn:timeDuration>
+        </bpmn:timerEventDefinition>
+      </bpmn:boundaryEvent>
+      <bpmn:sequenceFlow id="Flow_0nve047" sourceRef="Event_TimeToRate" targetRef="UserTask_JohnRatesSecurityRisk" />
+      <bpmn:sequenceFlow id="Flow_1k0uw94" sourceRef="Event_0lef0ug" targetRef="UserTask_rateSecurityRisk" />
+      <bpmn:exclusiveGateway id="Gateway_0wp1r5x">
+        <bpmn:incoming>Flow_0obht8a</bpmn:incoming>
+        <bpmn:incoming>Flow_1m0o17t</bpmn:incoming>
+        <bpmn:outgoing>Flow_05pisde</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:sequenceFlow id="Flow_0obht8a" sourceRef="UserTask_JohnRatesSecurityRisk" targetRef="Gateway_0wp1r5x" />
+      <bpmn:sequenceFlow id="Flow_1m0o17t" sourceRef="UserTask_rateSecurityRisk" targetRef="Gateway_0wp1r5x" />
+      <bpmn:endEvent id="Event_1anxe2h">
+        <bpmn:incoming>Flow_05pisde</bpmn:incoming>
+        <bpmn:terminateEventDefinition id="TerminateEventDefinition_1n9araa" />
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_05pisde" sourceRef="Gateway_0wp1r5x" targetRef="Event_1anxe2h" />
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_1p53gc8" sourceRef="Activity_1wrlyis" targetRef="Gateway_0ctna2y" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_Ticket">
@@ -127,21 +144,11 @@
       <bpmndi:BPMNShape id="Gateway_0bqhlax_di" bpmnElement="Gateway_0bqhlax" isMarkerVisible="true">
         <dc:Bounds x="595" y="92" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_134dg9k_di" bpmnElement="UserTask_JohnRatesSecurityRisk">
-        <dc:Bounds x="750" y="360" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0ctna2y_di" bpmnElement="Gateway_0ctna2y" isMarkerVisible="true">
         <dc:Bounds x="955" y="285" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1uw1r81_di" bpmnElement="UserTask_rateSecurityRisk">
-        <dc:Bounds x="750" y="190" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0ros112_di" bpmnElement="UserTask_someoneFixIt">
-        <dc:Bounds x="1170" y="270" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_139mcql_di" bpmnElement="UserTask_maryFixIt">
-        <dc:Bounds x="1170" y="410" width="100" height="80" />
+      <bpmndi:BPMNShape id="Event_1k1qb7u_di" bpmnElement="Event_1k1qb7u">
+        <dc:Bounds x="1862" y="292" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_01hthol_di" bpmnElement="ServiceTask_generateSolution">
         <dc:Bounds x="1170" y="77" width="100" height="80" />
@@ -150,19 +157,64 @@
       <bpmndi:BPMNShape id="Activity_18xfyz0_di" bpmnElement="UserTask_checkSolution">
         <dc:Bounds x="1340" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_17grngf_di" bpmnElement="Activity_deploySolution">
-        <dc:Bounds x="1640" y="190" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1k1qb7u_di" bpmnElement="Event_1k1qb7u">
-        <dc:Bounds x="1862" y="292" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_10e1k80_di" bpmnElement="Gateway_10e1k80" isMarkerVisible="true">
         <dc:Bounds x="1485" y="285" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0kibqjc_di" bpmnElement="Event_TimeToRate">
-        <dc:Bounds x="782" y="252" width="36" height="36" />
+      <bpmndi:BPMNShape id="Activity_139mcql_di" bpmnElement="UserTask_maryFixIt">
+        <dc:Bounds x="1170" y="410" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ros112_di" bpmnElement="UserTask_someoneFixIt">
+        <dc:Bounds x="1170" y="270" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17grngf_di" bpmnElement="ServiceTask_deploySolution">
+        <dc:Bounds x="1640" y="190" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wrlyis_di" bpmnElement="Activity_1wrlyis" isExpanded="true">
+        <dc:Bounds x="360" y="420" width="490" height="350" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0ntd1p4" bpmnElement="UserTask_rateSecurityRisk">
+        <dc:Bounds x="510" y="460" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_17cl7yp" bpmnElement="UserTask_JohnRatesSecurityRisk">
+        <dc:Bounds x="510" y="630" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0wp1r5x_di" bpmnElement="Gateway_0wp1r5x" isMarkerVisible="true">
+        <dc:Bounds x="655" y="565" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1anxe2h_di" bpmnElement="Event_1anxe2h">
+        <dc:Bounds x="752" y="572" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0lef0ug_di" bpmnElement="Event_0lef0ug">
+        <dc:Bounds x="382" y="482" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0tzs7c9" bpmnElement="Event_TimeToRate">
+        <dc:Bounds x="542" y="522" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_0m3ygio" bpmnElement="Flow_0nve047">
+        <di:waypoint x="560" y="558" />
+        <di:waypoint x="560" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1k0uw94_di" bpmnElement="Flow_1k0uw94">
+        <di:waypoint x="418" y="500" />
+        <di:waypoint x="510" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0obht8a_di" bpmnElement="Flow_0obht8a">
+        <di:waypoint x="610" y="670" />
+        <di:waypoint x="680" y="670" />
+        <di:waypoint x="680" y="615" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1m0o17t_di" bpmnElement="Flow_1m0o17t">
+        <di:waypoint x="610" y="500" />
+        <di:waypoint x="680" y="500" />
+        <di:waypoint x="680" y="565" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05pisde_di" bpmnElement="Flow_05pisde">
+        <di:waypoint x="705" y="590" />
+        <di:waypoint x="752" y="590" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_1hgmt59_di" bpmnElement="Event_TimeToFixIt">
         <dc:Bounds x="1202" y="332" width="36" height="36" />
       </bpmndi:BPMNShape>
@@ -187,27 +239,10 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0w1e330_di" bpmnElement="Flow_0w1e330">
         <di:waypoint x="620" y="142" />
-        <di:waypoint x="620" y="230" />
-        <di:waypoint x="750" y="230" />
+        <di:waypoint x="620" y="420" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="660" y="213" width="68" height="14" />
+          <dc:Bounds x="585" y="249" width="69" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0fljffp_di" bpmnElement="Flow_0fljffp">
-        <di:waypoint x="800" y="288" />
-        <di:waypoint x="800" y="360" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_05vnoh4_di" bpmnElement="Flow_05vnoh4">
-        <di:waypoint x="850" y="400" />
-        <di:waypoint x="900" y="400" />
-        <di:waypoint x="900" y="310" />
-        <di:waypoint x="955" y="310" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1x4xouv_di" bpmnElement="Flow_1x4xouv">
-        <di:waypoint x="850" y="230" />
-        <di:waypoint x="900" y="230" />
-        <di:waypoint x="900" y="310" />
-        <di:waypoint x="955" y="310" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0xulaot_di" bpmnElement="Flow_0xulaot">
         <di:waypoint x="1005" y="310" />
@@ -225,6 +260,15 @@
           <dc:Bounds x="1072" y="313" width="36" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0s8039u_di" bpmnElement="Flow_0s8039u">
+        <di:waypoint x="1270" y="117" />
+        <di:waypoint x="1340" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dbxwvx_di" bpmnElement="Flow_0dbxwvx">
+        <di:waypoint x="1390" y="157" />
+        <di:waypoint x="1390" y="310" />
+        <di:waypoint x="1485" y="310" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1q83oat_di" bpmnElement="Flow_1q83oat">
         <di:waypoint x="1510" y="335" />
         <di:waypoint x="1510" y="530" />
@@ -238,14 +282,26 @@
         <di:waypoint x="1220" y="368" />
         <di:waypoint x="1220" y="410" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0s8039u_di" bpmnElement="Flow_0s8039u">
-        <di:waypoint x="1270" y="117" />
-        <di:waypoint x="1340" y="117" />
+      <bpmndi:BPMNEdge id="Flow_0iygr6m_di" bpmnElement="Flow_0iygr6m">
+        <di:waypoint x="1510" y="285" />
+        <di:waypoint x="1510" y="230" />
+        <di:waypoint x="1640" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1505" y="203" width="62" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0dbxwvx_di" bpmnElement="Flow_0dbxwvx">
-        <di:waypoint x="1390" y="157" />
-        <di:waypoint x="1390" y="310" />
-        <di:waypoint x="1485" y="310" />
+      <bpmndi:BPMNEdge id="Flow_1u5h5ph_di" bpmnElement="Flow_1u5h5ph">
+        <di:waypoint x="1740" y="230" />
+        <di:waypoint x="1801" y="230" />
+        <di:waypoint x="1801" y="310" />
+        <di:waypoint x="1862" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0a05ta2_di" bpmnElement="Flow_0a05ta2">
+        <di:waypoint x="1535" y="310" />
+        <di:waypoint x="1862" y="310" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1557" y="292" width="54" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1b1i9fv_di" bpmnElement="Flow_1b1i9fv">
         <di:waypoint x="1270" y="310" />
@@ -257,26 +313,11 @@
         <di:waypoint x="1410" y="310" />
         <di:waypoint x="1485" y="310" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0iygr6m_di" bpmnElement="Flow_0iygr6m">
-        <di:waypoint x="1510" y="285" />
-        <di:waypoint x="1510" y="230" />
-        <di:waypoint x="1640" y="230" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1505" y="203" width="62" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0a05ta2_di" bpmnElement="Flow_0a05ta2">
-        <di:waypoint x="1535" y="310" />
-        <di:waypoint x="1862" y="310" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1557" y="292" width="54" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1u5h5ph_di" bpmnElement="Flow_1u5h5ph">
-        <di:waypoint x="1740" y="230" />
-        <di:waypoint x="1801" y="230" />
-        <di:waypoint x="1801" y="310" />
-        <di:waypoint x="1862" y="310" />
+      <bpmndi:BPMNEdge id="Flow_1p53gc8_di" bpmnElement="Flow_1p53gc8">
+        <di:waypoint x="850" y="595" />
+        <di:waypoint x="903" y="595" />
+        <di:waypoint x="903" y="310" />
+        <di:waypoint x="955" y="310" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
