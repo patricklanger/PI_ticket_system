@@ -167,6 +167,7 @@ def run_instances():
     # Loop über Anzahl der gewünschten Instanzenanzahl in 10er-Schritten
     instances_as_list = list(itertools.chain(range(0, NUM_OF_INSTANCES)))
     rate_security_risk_boundary_non_interrupting_triggerd = False
+    someone_has_to_fix_it_interrupting_triggerd = False
     for group in chunker(instances_as_list, 10):
         # Erzeuge bis zu 10 Instanzen
         for i in group:
@@ -190,6 +191,14 @@ def run_instances():
                 task_list = res.json()
                 next_task = next((task for task in task_list if task['name'] == "john rates security risk"), None)
                 rate_security_risk_boundary_non_interrupting_triggerd = True
+            if next_task['name'] == "someone has to fix it" and not someone_has_to_fix_it_interrupting_triggerd:
+                task_process_instance_id = next_task['processInstanceId']
+                time.sleep(60)
+                res = requests.get(BASE_URL + DIR_TASK)
+                task_list = res.json()
+                next_task = next((task for task in task_list if task['name'] == "mary has to fix it" and task[
+                    'processInstanceId'] == task_process_instance_id), None)
+                someone_has_to_fix_it_interrupting_triggerd = True
 
             print(f"{BASE_URL}{DIR_TASK}/{next_task['id']}{DIR_TASK_SUBMIT_FORM}")
             vars = random_form_variables(next_task['formKey'])
