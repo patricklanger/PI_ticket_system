@@ -2,6 +2,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+venv/
 
 ### IntelliJ IDEA ###
 .idea/
@@ -37,3 +38,7 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Python ###
+pythonscript/eventlog_kowoll_langer.xes
+pythonscript/pip_test.csv

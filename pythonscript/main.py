@@ -1,15 +1,18 @@
 # https://docs.camunda.org/rest/camunda-bpm-platform/7.19-SNAPSHOT/#tag/Process-Definition/operation/startProcessInstanceByKey
 
+import time
 import pandas as pd
 import requests
 import itertools
 import random
-# import pm4py
+import json
+import pm4py
 
-NUM_OF_INSTANCES = 2
+NUM_OF_INSTANCES = 1000
 PROCESS_KEY = "Process_Ticket"
 
 BASE_URL = "http://localhost:8080/engine-rest"
+DIR_DEPLOYMENT = "/deployment/create"
 DIR_PROCESS_INSTANCES = "/process-instance"
 DIR_HISTORY_PROCESS_INSTANCES = "/history/process-instance"
 DIR_START_PROCESS = f"/process-definition/key/{PROCESS_KEY}/start"
@@ -152,9 +155,18 @@ def random_form_variables(form_key):
         }
 
 
+def deploy():
+    file = {'file': open('../src/main/resources/Ticket.bpmn', 'rb')}
+    response = requests.post(f"{BASE_URL}{DIR_DEPLOYMENT}",
+                             files=file)
+    if 200 != response.status_code:
+        print("Error in deployment")
+
+
 def run_instances():
     # Loop über Anzahl der gewünschten Instanzenanzahl in 10er-Schritten
     instances_as_list = list(itertools.chain(range(0, NUM_OF_INSTANCES)))
+    rate_security_risk_boundary_non_interrupting_triggerd = False
     for group in chunker(instances_as_list, 10):
         # Erzeuge bis zu 10 Instanzen
         for i in group:
@@ -172,6 +184,13 @@ def run_instances():
             # TODO : was ist mit den timern???
             next_task = random.choice(task_list)
             # wähle dafür Zufällige Werte für die Forms
+            if next_task['name'] == "rate security risk" and not rate_security_risk_boundary_non_interrupting_triggerd:
+                time.sleep(60)
+                res = requests.get(BASE_URL + DIR_TASK)
+                task_list = res.json()
+                next_task = next((task for task in task_list if task['name'] == "john rates security risk"), None)
+                rate_security_risk_boundary_non_interrupting_triggerd = True
+
             print(f"{BASE_URL}{DIR_TASK}/{next_task['id']}{DIR_TASK_SUBMIT_FORM}")
             vars = random_form_variables(next_task['formKey'])
             print(vars)
@@ -181,13 +200,15 @@ def run_instances():
             print(res, res.text)
             res = requests.get(BASE_URL + DIR_TASK)
             task_list = res.json()
+            # Sleeping 10 ms to keep the right order, may remove later
+            time.sleep(0.01)
 
 
 def build_event_log():
     # Alle aktivitäten holen mit DIR_HISTORY_ACTIVITY_INSTANCES und df füllen
     res = requests.get(BASE_URL + DIR_HISTORY_ACTIVITY_INSTANCES)
     print(f"Number of History Activities: {len(res.json())}")
-    all_history_activities = res.json()
+    all_history_activities = json.loads(res.text)
 
     # Alle Variablen details holen
     res = requests.get(BASE_URL + DIR_HISTORY_DETAIL)
@@ -199,22 +220,30 @@ def build_event_log():
             if detail["activityInstanceId"] == activity["id"]:
                 # TODO nicht nur variablenUpdates sondern auch formField berücksichtigen
                 if detail["type"] == "variableUpdate":
-                    activity["detail_id-" + detail["variableName"]] = detail["variableName"]
-                    activity["detail_type-" + detail["variableName"]] = detail["type"]
-                    activity["detail_value-" + detail["variableName"]] = detail["value"]
-                    activity["detail_valueType-" + detail["variableName"]] = detail["variableType"]
+                    activity[detail["variableName"]] = detail["value"]
 
     df = pd.DataFrame.from_records(all_history_activities)
-    print(df)
-    df.to_csv("pip_test_csv.csv", sep='\t')
 
-    # TODO XES erstellen
-    # def convert_cvs_to_xes():
-    #     dataframe = pd.read_csv('test.csv', sep=',')
-    #
-    # dataframe = pm4py.format_dataframe(dataframe, case_id='Id', activity_key='Activity', timestamp_key='Timestamp')
-    # pm4py.write_xes(dataframe, 'exported.xes')
+    df.drop(
+        columns=['processInstanceId', 'id', 'calledCaseInstanceId', 'calledProcessInstanceId', 'canceled', 'activityId',
+                 'processDefinitionKey', 'processDefinitionId', 'executionId', 'taskId', 'completeScope',
+                 'tenantId', 'removalTime', 'parentActivityInstanceId'], inplace=True)
+    columns_titles = ['rootProcessInstanceId', 'activityName', 'activityType', 'assignee', 'startTime', 'endTime',
+                      'durationInMillis', 'ticketType', 'field_ticketDescription', 'ticketReporter', 'field_ticketID',
+                      'field_riskRating', 'field_solutionDescription', 'field_ticketStatus']
+    df = df.reindex(columns=columns_titles)
+    df = filter_rows_by_values(df, "activityType", ["startEvent", "exclusiveGateway", "noneEndEvent"])
 
+    # To prevent NaN values
+    df.fillna('empty', inplace=True)
+    df.to_csv("pip_test.csv", sep=',', index=False)
+
+
+def convert_cvs_to_xes():
+    dataframe = pd.read_csv('pip_test.csv', sep=',')
+    dataframe = pm4py.format_dataframe(dataframe, case_id='rootProcessInstanceId', activity_key='activityName',
+                                       timestamp_key='startTime')
+    pm4py.write_xes(dataframe, 'eventlog_kowoll_langer.xes')
 
 
 def cleanup():
@@ -239,10 +268,17 @@ def cleanup():
     print("end delete history")
 
 
+def filter_rows_by_values(df, col, values):
+    return df[~df[col].isin(values)]
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+    cleanup()
+    deploy()
     run_instances()
     build_event_log()
+    convert_cvs_to_xes()
     cleanup()
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
