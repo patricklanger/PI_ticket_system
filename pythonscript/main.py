@@ -238,8 +238,8 @@ def build_event_log():
                  'processDefinitionKey', 'processDefinitionId', 'executionId', 'taskId', 'completeScope',
                  'tenantId', 'removalTime', 'parentActivityInstanceId'], inplace=True)
     columns_titles = ['rootProcessInstanceId', 'activityName', 'activityType', 'assignee', 'startTime', 'endTime',
-                      'durationInMillis', 'ticketType', 'field_ticketDescription', 'ticketReporter', 'field_ticketID',
-                      'field_riskRating', 'field_solutionDescription', 'field_ticketStatus']
+                      'durationInMillis', 'field_ticketType', 'field_ticketDescription', 'field_ticketReporter',
+                      'field_ticketID', 'field_riskRating', 'field_solutionDescription', 'field_ticketStatus']
     df = df.reindex(columns=columns_titles)
     df = filter_rows_by_values(df, "activityType", ["startEvent", "exclusiveGateway", "noneEndEvent"])
 
